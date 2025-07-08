@@ -1,27 +1,34 @@
-import artisanRoutes from './routes/artisans.js';
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import artisanRoutes from './routes/artisans.js';
+
+// ✅ Load environment variables from .env
+dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ Mount artisan routes here
+// ✅ Mount artisan routes
 app.use('/api/artisans', artisanRoutes);
 
-// ✅ Your MongoDB connection string
-const MONGO_URI = 'mongodb+srv://WENGER:bZuJmY2MXnWCC9p8@cluster0.sdmzobk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+// ✅ MongoDB connection string from environment
+const MONGO_URI = process.env.MONGO_URI;
 
-// ✅ Connect to MongoDB
-mongoose.connect(MONGO_URI)
-  .then(() => console.log('✅ Connected to MongoDB Atlas'))
-  .catch((err) => console.error('❌ MongoDB connection error:', err));
+mongoose.connect(MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log('✅ Connected to MongoDB Atlas'))
+.catch((err) => console.error('❌ MongoDB connection error:', err));
 
-// ✅ Test route
+// ✅ Test root route
 app.get('/', (req, res) => {
   res.send('API is running ✅');
 });
 
-const PORT = 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// ✅ Start the server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
